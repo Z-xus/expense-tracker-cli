@@ -8,7 +8,10 @@ async function readData() {
     const data = await fs.readFile(filePath, "utf8");
     return data ? JSON.parse(data) : {};
   } catch (err) {
-    if (err.code === "ENOENT") return {};
+    if (err.code === "ENOENT") {
+      fs.writeFile(filePath, JSON.stringify({}));
+      return {};
+    }
     throw new Error(`Error reading data: ${err.message}`);
   }
 }
