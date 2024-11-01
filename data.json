@@ -2,30 +2,18 @@
   "expenses": [
     {
       "id": 1,
-      "amount": 100,
+      "amount": 210,
       "description": "Haircut",
-      "createdAt": "2024-11-01T09:49:33.918Z"
+      "createdAt": "2024-11-01"
     },
     {
       "id": 2,
-      "amount": 210,
-      "description": "Haircut",
-      "createdAt": "2024-11-01T10:23:00.398Z"
-    },
-    {
-      "id": 3,
-      "amount": 10,
-      "description": "Haircut",
-      "createdAt": "2024-11-01T10:48:33.299Z"
-    },
-    {
-      "id": 4,
-      "amount": 20,
-      "description": "Haircut",
-      "createdAt": "2024-11-01T12:20:01.677Z"
+      "amount": 150,
+      "description": "Jumbo King",
+      "createdAt": "2024-11-01"
     }
   ],
   "meta": {
-    "totalExpenses": 340
+    "totalExpenses": 360
   }
 }

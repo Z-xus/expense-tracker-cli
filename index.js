@@ -1,5 +1,6 @@
 const fs = require("fs").promises;
 const path = require("path");
+const readline = require("node:readline");
 const filePath = path.join(__dirname, "data.json");
 
 async function readData() {
@@ -36,6 +37,10 @@ async function argsParser() {
         parsedArgs.description = args[index + 1];
       } else if (arg === "--amount") {
         parsedArgs.amount = parseFloat(args[index + 1]);
+      } else if (arg === "--id") {
+        parsedArgs.id = parseInt(args[index + 1]);
+      } else if (arg === "--month") {
+        parsedArgs.month = parseInt(args[index + 1]);
       }
     });
   } catch (err) {
@@ -102,6 +107,63 @@ async function listExpenses() {
   });
 }
 
+async function updateExpense() {
+  const args = await argsParser();
+  if (!args.id || (!args.amount && !args.description)) {
+    throw new Error(
+      "ID is required, and at least one of amount or description must be provided.",
+    );
+  }
+
+  const data = await readData();
+  const expense = data.expenses.find((exp) => exp.id === args.id);
+
+  if (!expense) {
+    throw new Error(`Expense with ID ${args.id} not found`);
+  }
+
+  if (args.amount) expense.amount = args.amount;
+  if (args.description) expense.description = args.description;
+
+  await writeData(data);
+  console.log(`Expense with ID ${args.id} has been updated`);
+}
+
+async function deleteExpense() {
+  const args = await argsParser();
+  if (!args.id) {
+    throw new Error("ID is required to delete an expense");
+  }
+
+  const data = await readData();
+  data.expenses = data.expenses.filter((exp) => exp.id !== args.id);
+  await writeData(data);
+  console.log(`Expense with ID ${args.id} has been deleted`);
+}
+
+async function summarizeExpenses() {
+  const args = await argsParser();
+  if (!args.month) {
+    throw new Error(
+      "Month and number of months are required to summarize expenses",
+    );
+  }
+
+  const data = await readData();
+  const month = args.month;
+
+  if (!data.expenses || data.expenses.length === 0) {
+    console.log("No expenses found");
+    return;
+  }
+  const totalExpenses = data.expenses.reduce((sum, expense) => {
+    const expenseMonth = new Date(expense.createdAt).getMonth() + 1;
+    return expenseMonth === month ? sum + expense.amount : sum;
+  }, 0);
+
+  console.log(`Total expenses for month ${month}: ₹${totalExpenses}`);
+}
+
 (async () => {
   try {
     switch (process.argv[2]) {
@@ -110,6 +172,15 @@ async function listExpenses() {
         break;
       case "list":
         listExpenses();
+        break;
+      case "update":
+        updateExpense();
+        break;
+      case "delete":
+        deleteExpense();
+        break;
+      case "summary":
+        summarizeExpenses();
         break;
       default:
         throw new Error("Invalid command");
