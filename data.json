@@ -11,6 +11,21 @@
       "amount": 210,
       "description": "Haircut",
       "createdAt": "2024-11-01T10:23:00.398Z"
+    },
+    {
+      "id": 3,
+      "amount": 10,
+      "description": "Haircut",
+      "createdAt": "2024-11-01T10:48:33.299Z"
+    },
+    {
+      "id": 4,
+      "amount": 20,
+      "description": "Haircut",
+      "createdAt": "2024-11-01T12:20:01.677Z"
     }
-  ]
+  ],
+  "meta": {
+    "totalExpenses": 340
+  }
 }

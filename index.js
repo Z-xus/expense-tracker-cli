@@ -14,6 +14,12 @@ async function readData() {
 
 async function writeData(data) {
   try {
+    data.meta = {
+      totalExpenses: data.expenses.reduce(
+        (sum, expense) => sum + expense.amount,
+        0,
+      ),
+    };
     await fs.writeFile(filePath, JSON.stringify(data, null, 2));
   } catch (err) {
     throw new Error(`Error writing data: ${err.message}`);
@@ -50,7 +56,7 @@ async function addExpense() {
     id: data.expenses.length + 1,
     amount: args.amount,
     description: args.description,
-    createdAt: new Date(),
+    createdAt: formatDate(new Date()),
   };
 
   data.expenses.push(newExpense);
@@ -58,11 +64,52 @@ async function addExpense() {
   console.log(`Expense added with ID: ${newExpense.id}`);
 }
 
+function formatDate(date) {
+  return new Date(date).toISOString().split("T")[0];
+}
+
+async function listExpenses() {
+  const data = await readData();
+  if (!data.expenses || data.expenses.length === 0) {
+    console.log("No expenses found");
+    return;
+  }
+
+  data.expenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const idWidth = 5;
+  const amountWidth = 10;
+  const descriptionWidth = 18;
+  const createdAtWidth = 15;
+  const header =
+    "| " +
+    `ID`.padEnd(idWidth) +
+    " | " +
+    `Amount (₹)`.padEnd(amountWidth) +
+    " | " +
+    `Description`.padEnd(descriptionWidth) +
+    " | " +
+    `Date`.padEnd(createdAtWidth) +
+    " | ";
+  console.log(header);
+  console.log("-".repeat(header.length));
+  data.expenses.forEach((expense) => {
+    const id = expense.id.toString().padEnd(idWidth);
+    const amount = expense.amount.toString().padEnd(amountWidth);
+    const description = expense.description.padEnd(descriptionWidth);
+    const createdAt = formatDate(expense.createdAt).padEnd(createdAtWidth);
+    console.log(`| ${id} | ${amount} | ${description} | ${createdAt} |`);
+  });
+}
+
 (async () => {
   try {
     switch (process.argv[2]) {
       case "add":
         addExpense();
+        break;
+      case "list":
+        listExpenses();
         break;
       default:
         throw new Error("Invalid command");
