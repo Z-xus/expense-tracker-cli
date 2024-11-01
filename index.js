@@ -164,6 +164,45 @@ async function summarizeExpenses() {
   console.log(`Total expenses for month ${month}: ₹${totalExpenses}`);
 }
 
+function printHelp() {
+  const helpMessage = `
+Expense Tracker CLI
+====================
+A simple command-line application to track your expenses.
+
+Usage:
+  expense-tracker <command> [options]
+
+Commands:
+  add                     Add a new expense.
+    --description <desc>  Description of the expense (required).
+    --amount <amt>        Amount of the expense (required).
+  
+  list                    List all expenses.
+  
+  update                  Update an existing expense.
+    --id <id>             ID of the expense to update (required).
+    [--description <desc>] New description for the expense.
+    [--amount <amt>]      New amount for the expense.
+
+  delete                  Delete an expense.
+    --id <id>             ID of the expense to delete (required).
+  
+  summary                 Summarize expenses for a specific month.
+    --month <month>       Month to summarize expenses (1-12, required).
+    --months <num>        Number of months to summarize (optional).
+
+Examples:
+  expense-tracker add --description "Haircut" --amount 100
+  expense-tracker list
+  expense-tracker update --id 1 --amount 150
+  expense-tracker delete --id 2
+  expense-tracker summary --month 11 --months 3
+`;
+
+  console.log(helpMessage);
+}
+
 (async () => {
   try {
     switch (process.argv[2]) {
@@ -183,7 +222,7 @@ async function summarizeExpenses() {
         summarizeExpenses();
         break;
       default:
-        throw new Error("Invalid command");
+        printHelp();
     }
   } catch (err) {
     console.error(err.message);
